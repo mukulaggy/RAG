@@ -22,5 +22,6 @@ pymilvus
 llama-index
 pandas
 tqdm
-
-
+transformers
+sentence-transformers
+llama-cpp-python
