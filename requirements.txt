@@ -1,15 +1,13 @@
-langchain_openai 
-langchain_core
-python-dotenv
 streamlit
-langchain_core
-langchain_community
+python-dotenv
+langchain
+langchain-community
 langserve
 fastapi
 uvicorn
-sse_starlette
+sse-starlette
 ipykernel
-bs4
+beautifulsoup4
 pypdf
 chromadb
 faiss-cpu
@@ -20,15 +18,9 @@ google-generativeai
 langchain-google-genai
 groq
 langchain-groq
-beautifulsoup4
 pymilvus
 llama-index
 pandas
 tqdm
-llama-index
- faiss-cpu
-  transformers 
-  sentence-transformers 
-  pandas
- 
-llama-cpp-python
+
+
