@@ -6,4 +6,5 @@ faiss-cpu
 groq
 pymilvus
 tqdm
+pypdf
 
