@@ -14,10 +14,13 @@ from groq import Groq
 from tqdm import tqdm
 import sys
 from pymilvus import connections, utility, Collection
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ======= LangChain Tracing & API Key =======
-# os.environ["LANGCHAIN_TRACING_V2"] = "true"
-# os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
 
 # Custom print function that outputs to both terminal and Streamlit
 def log_message(message, streamlit_output=True):
@@ -154,14 +157,23 @@ if st.button("Ingest Documents"):
     # ---------- Milvus Vector Store ----------
     try:
         log_message("Storing documents in vector database...")
-        milvus_client = MilvusClient(uri="http://localhost:19530")
+        milvus_client = MilvusClient(
+            uri=os.getenv("MILVUS_URI"),
+            token=os.getenv("ZILLIZ_API_KEY"),
+            secure=True
+        )
         collection_name = "rag_demo_nomic"
         
         log_message("Creating embeddings and storing in Milvus...")
         vectorstore = Milvus.from_documents(
             docs,
             embeddings,
-            connection_args={"uri": "http://localhost:19530"},
+            connection_args={
+                "uri": os.getenv("MILVUS_URI"),
+                "token": os.getenv("ZILLIZ_API_KEY"),
+                "secure": True,
+                "db_name": "default"
+            },
             collection_name=collection_name
         )
         st.session_state.vectorstore = vectorstore
