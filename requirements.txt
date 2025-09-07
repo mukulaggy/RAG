@@ -8,3 +8,5 @@ pymilvus
 tqdm
 pypdf
 langchain-ollama
+sentence-transformers
+transformers

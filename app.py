@@ -9,6 +9,9 @@ from langchain_community.vectorstores import Milvus
 from langchain.prompts import PromptTemplate
 from langchain.schema import Document
 from langchain.embeddings.base import Embeddings
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.embeddings.base import Embeddings
+
 from pymilvus import MilvusClient
 from groq import Groq
 from tqdm import tqdm
@@ -124,24 +127,27 @@ if st.button("Ingest Documents"):
     try:
         log_message("Initializing embeddings...")
         class NomicEmbeddings(Embeddings):
+            def __init__(self):
+                # Initialize HuggingFace model once
+                self.hf_embeddings = HuggingFaceEmbeddings(
+                    model_name="sentence-transformers/all-mpnet-base-v2"
+                )
+
             def embed_documents(self, texts):
-                from ollama import embeddings as ollama_emb
                 embeddings_list = []
                 log_message(f"Generating embeddings for {len(texts)} documents...")
                 
-                # Create a progress bar for the terminal
                 for i, t in enumerate(tqdm(texts, desc="Generating embeddings", file=sys.stdout)):
                     log_message(f"Embedding document {i+1}/{len(texts)}: {t[:50]}...", streamlit_output=False)
-                    embedding = ollama_emb(prompt=t, model="nomic-embed-text:v1.5")['embedding']
+                    embedding = self.hf_embeddings.embed_query(t)
                     log_message(f"Generated embedding with {len(embedding)} dimensions", streamlit_output=False)
                     embeddings_list.append(embedding)
                 
                 return embeddings_list
 
             def embed_query(self, text):
-                from ollama import embeddings as ollama_emb
                 log_message(f"Generating query embedding for: {text[:50]}...")
-                embedding = ollama_emb(prompt=text, model="nomic-embed-text:v1.5")['embedding']
+                embedding = self.hf_embeddings.embed_query(text)
                 log_message(f"Query embedding dimensions: {len(embedding)}")
                 return embedding
 
